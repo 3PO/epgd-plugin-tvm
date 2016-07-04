@@ -14,7 +14,3 @@ make
 make install
 ```
 
-###Note:
-This Plugin can only used with the "http" branch of EPGd
-
-https://projects.vdr-developer.org/git/vdr-epg-daemon.git/log/?h=http
