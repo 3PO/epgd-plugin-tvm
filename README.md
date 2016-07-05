@@ -16,9 +16,17 @@ make
 make install
 ```
 
-######Gentoo/Gen2VDR:
+####Gentoo/Gen2VDR:
 
 Sipmply use the Overlay:
 
 https://github.com/3PO/3PO-overlay
 
+
+####Arch Linux
+
+- ToDo
+
+####yaVDR
+
+- ToDo
