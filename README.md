@@ -22,12 +22,11 @@ Simply use the Overlay:
 
 https://github.com/3PO/3PO-overlay
 
+
 ####Arch Linux:
 
-![archlinux](http://dreipo.cc/tvm/archlinux-logo_smal.png)
-
-
 - ToDo
+
 
 ####yaVDR:
 
