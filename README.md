@@ -1,6 +1,6 @@
 #epgd-plugin-tvm
 
-![stack Overflow](http://dreipo.cc/tvm/images/tvmvdr2.png)
+![epgd-plugin-tvm](http://dreipo.cc/tvm/tvmvdr2.png)
 
 ###TVM loader Plugin for EPGd.
 Clone into the "PLUGINS" directory of your epgd source and build.
