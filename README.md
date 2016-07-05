@@ -18,15 +18,16 @@ make install
 
 ####Gentoo/Gen2VDR:
 
-Sipmply use the Overlay:
+Simply use the Overlay:
 
 https://github.com/3PO/3PO-overlay
 
 
-####Arch Linux
+![archlinux](http://dreipo.cc/tvm/archlinux-logo_smal.png) ####Arch Linux:
 
 - ToDo
 
-####yaVDR
+####yaVDR:
 
 - ToDo
+
