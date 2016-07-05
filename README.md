@@ -1,5 +1,7 @@
 #epgd-plugin-tvm
 
+![stack Overflow](http://dreipo.cc/tvm/images/tvmvdr2.png)
+
 ###TVM loader Plugin for EPGd.
 Clone into the "PLUGINS" directory of your epgd source and build.
 
@@ -13,4 +15,10 @@ cd ..
 make
 make install
 ```
+
+######Gentoo/Gen2VDR:
+
+Sipmply use the Overlay:
+
+https://github.com/3PO/3PO-overlay
 
