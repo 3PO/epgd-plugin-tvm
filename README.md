@@ -38,7 +38,7 @@ cd  ~/src/epgd
 apt-get source vdr-epg-daemon
 cd vdr-epg-daemon*
 git clone https://github.com/3PO/epgd-plugin-tvm PLUGINS/tvm
-dch -l local "added plugin foo"
+dch -l local "added plugin tvm"
 dpkg-buildpackage -b -us -uc
 sudo dpkg -i ../*.deb
 ```
