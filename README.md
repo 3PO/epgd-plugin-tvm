@@ -30,5 +30,15 @@ https://github.com/3PO/3PO-overlay
 
 ####yaVDR:
 
-- ToDo
-.
+```ini
+sudo apt-get install build-essential devscripts
+sudo apt-get build-dep vdr-epg-daemon
+mkdir -p ~/src/epgd
+cd  ~/src/epgd
+apt-get source vdr-epg-daemon
+cd vdr-epg-daemon*
+git clone https://github.com/3PO/epgd-plugin-tvm PLUGINS/tvm
+dch -l local "added plugin foo"
+dpkg-buildpackage -b -us -uc
+sudo dpkg -i ../*.deb
+```
