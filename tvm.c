@@ -481,7 +481,7 @@ int Tvm2::processFile(const char* extid, MemoryStruct* data,
       {
          int insert;
          char* prop = 0;
-         int id;
+         tEventId id;
 
          // skip all unexpected elements
          
@@ -502,7 +502,7 @@ int Tvm2::processFile(const char* extid, MemoryStruct* data,
          // create event ..
          
          obj->eventsDb->clear();
-         obj->eventsDb->setValue("EventId", id);
+         obj->eventsDb->setBigintValue("EventId", id);
          obj->eventsDb->setValue("ChannelId", channelId);
          
          insert = !obj->eventsDb->find();
