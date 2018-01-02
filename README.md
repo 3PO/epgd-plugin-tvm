@@ -1,4 +1,5 @@
-#epgd-plugin-tvm
+**epgd-plugin-tvm**
+
 
 ![epgd-plugin-tvm](http://dreipo.cc/tvm/tvmvdr2.png)
 
@@ -23,12 +24,12 @@ Simply use the Overlay:
 https://github.com/3PO/3PO-overlay
 
 
-####Arch Linux:
+**Arch Linux:**
 
 - ToDo
 
 
-####yaVDR:
+**yaVDR:**
 
 ```ini
 sudo apt-get install build-essential devscripts
