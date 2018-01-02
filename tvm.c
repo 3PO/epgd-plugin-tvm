@@ -6,6 +6,8 @@
  */
 
 #include <stdint.h>
+#include <dirent.h>
+
 #include <map>
 
 #include "tvm.h"
@@ -55,12 +57,12 @@ int Tvm2::initDb()
 
 //    // --------
 //    // update events set updflg = ?
-//    //    where fileref = ? 
+//    //    where fileref = ?
 //    //      and source = ?
 //    //      and updflg in (....)
 
 //    stmtSetUpdFlgByFileref = new cDbStatement(obj->eventsDb);
-   
+
 //    stmtSetUpdFlgByFileref->build("update %s set ", obj->eventsDb->TableName());
 //    stmtSetUpdFlgByFileref->bind("UpdFlg", cDbService::bndIn |cDbService:: bndSet);
 //    stmtSetUpdFlgByFileref->build( " where ");
@@ -72,12 +74,12 @@ int Tvm2::initDb()
 
 //    // --------
 //    // update events set delflg = ?, fileref = ?, updsp = ?
-//    //    where fileref = ? 
+//    //    where fileref = ?
 //    //      and source = ?
 
 //    valueFileRef = new cDbValue(obj->eventsDb->getField("FileRef"));
 //    stmtSetDelByFileref = new cDbStatement(obj->eventsDb);
-   
+
 //    stmtSetDelByFileref->build("update %s set ", obj->eventsDb->TableName());
 //    stmtSetDelByFileref->bind("DelFlg", cDbService::bndIn |cDbService:: bndSet);
 //    stmtSetDelByFileref->bind("UpdFlg", cDbService::bndIn |cDbService:: bndSet, ", ");
@@ -88,10 +90,10 @@ int Tvm2::initDb()
 //    stmtSetDelByFileref->bind("Source", cDbService::bndIn | cDbService::bndSet, " and ");
 
 //    status += stmtSetDelByFileref->prepare();
-  
+
    // ----------
-   // update events 
-   //   set updflg = case when updflg in (...) then 'D' else updflg end, 
+   // update events
+   //   set updflg = case when updflg in (...) then 'D' else updflg end,
    //       delflg = 'Y',
    //       updsp = unix_timestamp()
    //   where source = '...'
@@ -105,10 +107,10 @@ int Tvm2::initDb()
    stmtMarkOldEvents->build(" where source = '%s'", getSource());
    stmtMarkOldEvents->build(" and  (source, fileref) not in (select source,fileref from fileref)");
 
-   status += stmtMarkOldEvents->prepare();  
+   status += stmtMarkOldEvents->prepare();
 
    // ---------
-   // select channelid, mergesp from channelmap 
+   // select channelid, mergesp from channelmap
    //     where source = ? and extid = ?
 
    selectId = new cDbStatement(obj->mapDb);
@@ -120,13 +122,13 @@ int Tvm2::initDb()
    selectId->build(" from %s where ", obj->mapDb->TableName());
    selectId->bind("Source", cDBS::bndIn | cDBS::bndSet);
    selectId->bind("ExternalId", cDBS::bndIn | cDBS::bndSet, " and ");
-   
+
    status += selectId->prepare();
 
    // --------
    // select distinct extid from channelmap
    //   where source = ?
-   
+
    selectDistBySource = new cDbStatement(obj->mapDb);
    selectDistBySource->build("select ");
    selectDistBySource->bind("ExternalId", cDBS::bndOut, "distinct ");
@@ -155,9 +157,9 @@ int Tvm2::exitDb()
 
 int Tvm2::atConfigItem(const char* Name, const char* Value)
 {
-   if (!strcasecmp(Name, "Timeout"))  
+   if (!strcasecmp(Name, "Timeout"))
       timeout = atoi(Value);
-   else 
+   else
       return fail;
 
    return success;
@@ -167,8 +169,8 @@ int Tvm2::atConfigItem(const char* Name, const char* Value)
 // Ready
 //***************************************************************************
 
-int Tvm2::ready() 
-{ 
+int Tvm2::ready()
+{
    static int count = na;
 
    if (count == na)
@@ -187,13 +189,13 @@ int Tvm2::ready()
 }
 
 //***************************************************************************
-// Process 
+// Process
 // - Datei von TVM holen (sofern aktualisiert, noch nicht geholt oder fullupdate)
 //    Erkennung der Aktualisierung erfolgt über die 'fileref' Tabelle
 // - XSLT Konvertierung durchführen
-// - Resultat je zugeordnetem Kanal in der 'events' 
+// - Resultat je zugeordnetem Kanal in der 'events'
 //    Tabelle speichern/ aktualisieren incl. der 'fileref'
-// - Neue 'fileref' in die 'fileref' Tabelle übernehmen 
+// - Neue 'fileref' in die 'fileref' Tabelle übernehmen
 //    -> damit ist die Verarbeitung quittiert
 //***************************************************************************
 
@@ -207,15 +209,15 @@ int Tvm2::processDay(int day, int fullupdate, Statistic* stat)
       tell(1, "Skipping day %d for TVM plugin, since all days ar performed on day 0", day);
       return success;
    }
-      
+
    obj->connection->startTransaction();
 
    // loop over all extid's of channelmap
-   
+
    obj->mapDb->clear();
    obj->mapDb->setValue("Source", getSource());
-   
-   for (int res = selectDistBySource->find(); res && !obj->doShutDown(); 
+
+   for (int res = selectDistBySource->find(); res && !obj->doShutDown();
         res = selectDistBySource->fetch())
    {
       char* extid = strdup(obj->mapDb->getStrValue("ExternalId"));
@@ -229,11 +231,11 @@ int Tvm2::processDay(int day, int fullupdate, Statistic* stat)
       // URL - Aufbau
       //    http://wwwa.tvmovie.de/static/tvghost/html/onlinedata/cftv520/tvdaten-premium-EXTID.cftv
 
-      asprintf(&filename, "tvdaten-premium-%s.cftv", extid);    
+      asprintf(&filename, "tvdaten-premium-%s.cftv", extid);
       asprintf(&url, "http://wwwa.tvmovie.de/static/tvghost/html/onlinedata/cftv520/%s", filename);
 
       // lookup file information
-         
+
       obj->fileDb->setValue("Name", filename);
       obj->fileDb->setValue("Source", getSource());
       found = obj->fileDb->find();
@@ -244,12 +246,12 @@ int Tvm2::processDay(int day, int fullupdate, Statistic* stat)
       char* fileRef = 0;
 
       // first get the http header
-         
+
       data.clear();
       data.headerOnly = yes;
-         
+
       status = obj->downloadFile(url, fileSize, &data, 30, userAgent());
-         
+
       if (status != success)
       {
          tell(0, "Download header of '%s' failed", url);
@@ -267,7 +269,7 @@ int Tvm2::processDay(int day, int fullupdate, Statistic* stat)
          tell(2, "Skipping download of id %s due to non-update", extid);
 
          stat->nonUpdates++;
-            
+
          free(filename);
          free(url);
          free(fileRef);
@@ -303,11 +305,11 @@ int Tvm2::processDay(int day, int fullupdate, Statistic* stat)
 
          stat->bytes += fileSize;
          stat->files++;
-            
+
          tell(0, "Downloaded file '%s' with (%d) Bytes", url, fileSize);
 
          // store to FS
-         {            
+         {
             char* tmp = 0;
             asprintf(&tmp, "%s.zip", filename);
             obj->storeToFs(&data, tmp, getSource());
@@ -315,7 +317,7 @@ int Tvm2::processDay(int day, int fullupdate, Statistic* stat)
          }
 
          asprintf(&fileRef, "%s-%s", obj->fileDb->getStrValue("Name"), data.tag);
-            
+
          if ((status = processFile(extid, &data, filename, fileRef)) != success)
          {
             tell(0, "Processing of '%s' failed", filename);
@@ -326,7 +328,7 @@ int Tvm2::processDay(int day, int fullupdate, Statistic* stat)
          if (status == success)
          {
 // we can use this code instead of "stmtMarkOldEvents" !!
-            
+
 //             if (found)
 //             {
 //                // mark 'old' entrys in events table as deleted
@@ -358,9 +360,9 @@ int Tvm2::processDay(int day, int fullupdate, Statistic* stat)
 
 //                stmtSetDelByFileref->execute();
 //             }
-               
+
             // Confirm processing of file
-               
+
             obj->fileDb->setValue("ExternalId", extid);
             obj->fileDb->setValue("Tag", data.tag);
             obj->fileDb->setValue("FileRef", fileRef);
@@ -370,7 +372,7 @@ int Tvm2::processDay(int day, int fullupdate, Statistic* stat)
             usleep(100000);
             obj->connection->startTransaction();
          }
-            
+
          free(fileRef);
       }
 
@@ -404,7 +406,7 @@ int Tvm2::zipValid(MemoryStruct* data)
       return no;
 
    strncpy(head, data->memory, 100);
-   head[100] = 0;   
+   head[100] = 0;
 
    if (strcasestr(head, "DOCTYPE HTML"))
       return no;
@@ -416,7 +418,7 @@ int Tvm2::zipValid(MemoryStruct* data)
 // Process Tvm File
 //***************************************************************************
 
-int Tvm2::processFile(const char* extid, MemoryStruct* data, 
+int Tvm2::processFile(const char* extid, MemoryStruct* data,
                       const char* fileName, const char* fileRef)
 {
    xmlDocPtr transformedDoc;
@@ -433,7 +435,7 @@ int Tvm2::processFile(const char* extid, MemoryStruct* data,
    tell(0, "Extracting '%s'", fileName);
 
    asprintf(&command, "unzip -o -qq -P %s -d %s/%s %s/%s/%s",
-            password, EpgdConfig.cachePath, getSource(), 
+            password, EpgdConfig.cachePath, getSource(),
             EpgdConfig.cachePath, getSource(), fileName);
 
    asprintf(&tmp, "%s/%s/%s.tv1", EpgdConfig.cachePath, getSource(), extid);
@@ -484,27 +486,27 @@ int Tvm2::processFile(const char* extid, MemoryStruct* data,
          tEventId id;
 
          // skip all unexpected elements
-         
+
          if (node->type != XML_ELEMENT_NODE || strcmp((char*)node->name, "event") != 0)
             continue;
-         
+
          // get/check id
-         
+
          if (!(prop = (char*)xmlGetProp(node, (xmlChar*)"id")) || !*prop || !(id = atoi(prop)))
          {
             xmlFree(prop);
             tell(0, "Missing event id, ignoring!");
             continue;
          }
-         
+
          xmlFree(prop);
-         
+
          // create event ..
-         
+
          obj->eventsDb->clear();
          obj->eventsDb->setBigintValue("EventId", id);
          obj->eventsDb->setValue("ChannelId", channelId);
-         
+
          insert = !obj->eventsDb->find();
 
          obj->eventsDb->setValue("Source", getSource());
@@ -515,13 +517,13 @@ int Tvm2::processFile(const char* extid, MemoryStruct* data,
          obj->parseEvent(obj->eventsDb->getRow(), node);
 
          // ...
-         
+
          time_t mergesp = obj->mapDb->getIntValue("MERGESP");
          long starttime = obj->eventsDb->getIntValue("STARTTIME");
          int merge = obj->mapDb->getIntValue("MERGE");
 
          // store ..
-         
+
          if (insert)
          {
             // handle insert
@@ -575,7 +577,36 @@ int Tvm2::cleanupAfter()
 {
    // mark wasted events (delflg, ...)
 
-   stmtMarkOldEvents->execute();   
+   stmtMarkOldEvents->execute();
+
+   // remove remaining (unused) pictures from filesysten
+
+   DIR* dir;
+   dirent* dp;
+   char* path = 0;
+
+   asprintf(&path, "%s/%s", EpgdConfig.cachePath, getSource());
+
+   if (!(dir = opendir(path)))
+   {
+      tell(0, "Error: Opening plugin directory '%s' failed, %s",
+           path, strerror(errno));
+      return fail;
+   }
+
+   while ((dp = readdir(dir)))
+   {
+      if (strstr(dp->d_name, ".jpg"))
+      {
+         char* fileName;
+         asprintf(&fileName, "%s/%s/%s", EpgdConfig.cachePath, getSource(), dp->d_name);
+         removeFile(fileName);
+         free(fileName);
+      }
+   }
+
+   closedir(dir);
+   free(path);
 
    return success;
 }
@@ -607,12 +638,12 @@ int Tvm2::downloadImageFile(const char* extid)
 
    free(url);
    status = obj->storeToFs(&data, filename, getSource());
- 
+
    memset(password, 0xb7, 7);
    password[7] = 0;
 
    asprintf(&command, "unzip -o -qq -P %s -d %s/%s %s/%s/%s",
-            password, EpgdConfig.cachePath, getSource(), 
+            password, EpgdConfig.cachePath, getSource(),
             EpgdConfig.cachePath, getSource(), filename);
 
    if (system(command) < 0)
@@ -629,7 +660,7 @@ int Tvm2::downloadImageFile(const char* extid)
    asprintf(&tmp, "%s/%s/%s", EpgdConfig.cachePath, getSource(), filename);
    removeFile(tmp);
    free(tmp);
-   
+
    free(command);
    free(filename);
 
@@ -664,74 +695,74 @@ int Tvm2::createXml(const char* extid, MemoryStruct* xmlData)
    char* filename;
    map<int, map<string, string> > table;
    map<int, map<string, string> >::iterator iter;
-   
-   tell(0, "Creating xml of %s", extid);  
+
+   tell(0, "Creating xml of %s", extid);
 
    // -----------------------------------------------
    // read data into memory table
-   
+
    for (int num = 0; num < 2; num++)
    {
       FILE* file;
       int ch;
       int row = 0, col = 0;
-      
+
       asprintf(&filename, "/%s/%s/%s.tv%d", EpgdConfig.cachePath, getSource(), extid, num+1);
-      
+
       if (!(file = fopen(filename, "r")))
       {
          tell(0, "Error: Opening '%s' failed, status was '%s'", filename, strerror(errno));
          free(filename);
          return fail;
       }
-      
+
       fseek(file, 0, SEEK_SET);
-      
-      for (int i = 0; i < 10; i++) 
+
+      for (int i = 0; i < 10; i++)
       {
          row *= 10;
          row += fgetc(file) - '0';
       }
-      
+
       while ((ch = fgetc(file)) != '\f')
       {
          col *= 10;
          col += ch - '0';
       }
-      
+
       fseek(file, 40, SEEK_SET);                    // seek to data section
-      
+
       for (int c = 0; c < col; c++)
       {
          Field header(file);
          const char* name = header.getString().c_str();
-         
+
          for (int r = 0; r < row; r++)
          {
             Field field(file);
-            
+
             if (field.isNumeric())
                table[r][name] = num2Str(field.getNumeric());
             else if (field.isString())
                table[r][name] = field.getXmlString();
          }
       }
-      
+
       fclose(file);
       removeFile(filename);
       free(filename);
    }
 
-   // -----------------------------------------------   
+   // -----------------------------------------------
    // flush data to xml file
 
    string xmlBuf;
-   
+
    xmlBuf += "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" ?>\n";
    xmlBuf += "<!DOCTYPE Export>\n";
    xmlBuf += "<Export>\n";
 
-   for (iter = table.begin(); iter != table.end(); iter++) 
+   for (iter = table.begin(); iter != table.end(); iter++)
    {
       xmlBuf += "  <Sendung>\n";
 
@@ -740,7 +771,7 @@ int Tvm2::createXml(const char* extid, MemoryStruct* xmlData)
 
       xmlBuf += "  </Sendung>\n";
    }
-   
+
    xmlBuf += "</Export>\n";
 
    xmlData->size = xmlBuf.length()+TB;
