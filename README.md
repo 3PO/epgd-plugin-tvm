@@ -1,9 +1,10 @@
 **epgd-plugin-tvm**
-
+----------
 
 ![epgd-plugin-tvm](http://dreipo.cc/tvm/tvmvdr2.png)
 
-###TVM loader Plugin for EPGd.
+**TVM loader Plugin for EPGd.**
+
 Clone into the "PLUGINS" directory of your epgd source and build.
 
 Here's an example:
