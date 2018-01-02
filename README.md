@@ -16,7 +16,7 @@ make
 make install
 ```
 
-####Gentoo/Gen2VDR:
+**Gentoo/Gen2VDR:**
 
 Simply use the Overlay:
 
