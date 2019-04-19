@@ -229,10 +229,10 @@ int Tvm2::processDay(int day, int fullupdate, Statistic* stat)
       tell(0, "Checking tvm id %s", extid);
 
       // URL - Aufbau
-      //    http://wwwa.tvmovie.de/static/tvghost/html/onlinedata/cftv520/tvdaten-premium-EXTID.cftv
+      //    http://www.clickfinder.de/daten/onlinedata/cftv520/tvdaten-premium-EXTID.cftv
 
       asprintf(&filename, "tvdaten-premium-%s.cftv", extid);
-      asprintf(&url, "http://wwwa.tvmovie.de/static/tvghost/html/onlinedata/cftv520/%s", filename);
+      asprintf(&url, "http://www.clickfinder.de/daten/onlinedata/cftv520/%s", filename);
 
       // lookup file information
 
@@ -626,7 +626,7 @@ int Tvm2::downloadImageFile(const char* extid)
    int status;
 
    asprintf(&filename, "tvbilder-premium-%s.cftv", extid);
-   asprintf(&url, "http://wwwa.tvmovie.de/static/tvghost/html/onlinedata/cftv520/%s", filename);
+   asprintf(&url, "http://www.clickfinder.de/daten/onlinedata/cftv520/%s", filename);
 
    if (obj->downloadFile(url, fileSize, &data, 30, userAgent()) != success)
    {
