@@ -1,9 +1,9 @@
 
 file="/tmp/datainfo.txt"
 
-wget http://wwwa.tvmovie.de/static/tvghost/html/onlinedata/cftv520/datainfo.txt -q -O $file
+wget http://www.clickfinder.de/daten/onlinedata/cftv520/datainfo.txt -q -O $file
 
-cat $file | dos2unix -l | dos2unix | while read line; do 
+cat $file | mac2unix | while read line; do 
 
    i=$[ $i + 1 ]
 
@@ -17,4 +17,4 @@ cat $file | dos2unix -l | dos2unix | while read line; do
 
    fi;
 
-done | sort
+done | sort -t: -k2 -n
