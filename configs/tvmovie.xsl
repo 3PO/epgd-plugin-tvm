@@ -29,7 +29,8 @@
 	    <xsl:call-template name="date2UTC"><xsl:with-param name="date" select="translate(Beginn,' ','T')"/></xsl:call-template>
 	</starttime>
 
-	<duration><xsl:value-of select="substring-before(Dauer,' ')*60"/></duration>
+        <duration><xsl:value-of select="translate(Dauer, ' ', '') * 60"/></duration>
+
 
 	<xsl:if test="string-length(VPS)"><vps><xsl:value-of select="date:seconds(translate(VPS,' ','T'))"/></vps></xsl:if>
 
@@ -38,7 +39,7 @@
 
 	<xsl:if test="string-length(Originaltitel)"><shorttext><xsl:value-of select="Originaltitel"/></shorttext></xsl:if>
 
-	<xsl:if test="string-length(Herstellungsjahr)"><year><xsl:value-of select="Herstellungsjahr"/></year></xsl:if>
+        <xsl:if test="string-length(Herstellungsjahr)"><year><xsl:value-of select="substring(translate(Herstellungsjahr, ' ', ''), 1, 10)"/></year></xsl:if>
 	<xsl:if test="string-length(Herstellungsland)"><country><xsl:value-of select="Herstellungsland"/></country></xsl:if>
 
 
